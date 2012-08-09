@@ -9,6 +9,7 @@
   },
   "dependencies": {},
   "devDependencies": {
+    "redis" : "0.7.2",
     "tap": "~0.2.5"
   },
   "scripts": {
