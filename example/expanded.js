@@ -15,9 +15,7 @@ var tom = group('tom')
 // Member and membership control
 // 
 
-tom.membership.add('nodejs', log())
-tom.membership.add('bash', log())
-tom.membership.add('javascript', log())
+tom.membership.add([ 'nodejs', 'bash', 'javascript' ], log())
 bob.membership.add('javascript', log())
 sarah.membership.add('javascript', log())
 nodejs.members.add(javascript, log())
@@ -55,11 +53,9 @@ nodejs.members.intersect('bash', log('nodejs members intersected with bash:'))
 
 // get the groups that *both* tom and bob can membership (AND)
 tom.membership.intersect(bob, log('memberships of tom && bob'))
-// => [ 'anonymous', 'one', 'two' ]
 
 // get the groups that *either* tom or bob can membership (XOR)
 tom.membership.union(bob, log('memberships of tom || bob'))
-// => [ 'anonymous', 'admin', 'one', 'two', 'three', 'four', 'five' ]
 
 // get the membership that tom has that bob does not have
 tom.membership.without(bob, log('memberships of tom that bob does not have'))
@@ -71,18 +67,17 @@ tom.membership.without(bob, log('memberships of tom that bob does not have'))
 // tom, bob and sarah
 // 
 
-// get the groups that each of tom, bob, and sarah can membership (AND)
+// get the groups that each of tom, bob, 
+// and sarah has membership to (AND)
 tom.membership.intersect([ bob, sarah ], log('memberships of tom && bob && sarah'))
-// => [ 'anonymous' ]
 
-// get the groups that at least one of tom, bob, or sarah has membership to (XOR)
+// get the groups that at least one of tom, 
+// bob, or sarah has membership to (XOR)
 tom.membership.union([ bob, sarah ], log('memberships of tom || bob || sarah'))
-// => [ 'anonymous', 'admin', 'one', 'two', 'three', 'four', 'five' ]
 
-// get the membership that tom has that sarah and bob do not have
+// get the groups that tom has membership to 
+// that sarah and bob do not have membership to
 tom.membership.without([ bob, sarah ], log('memberships of tom !== sarah && memberships of tom !== bob'))
-// => [ 'admin' ]
-
 
 // delete nodes and all connections 
 tom.delete(log())
