@@ -6,12 +6,21 @@ a powerful graph implementation using [redis sets](http://redis.io/commands#set)
 
 # Methods
 
-# Graph(id, opts={ inner : 'membership', outer : 'members' })
-return a new node instance 
+`redis-graph` uses an instance of `node_redis` to connect to redis with
 
-This constructor takes an options argument with `inner` and `outer` properties that will be used for the inner/outer edges for the node. 
+``` js
 
-`inner defaults to `'membership'` and `'outer'` defaults to `'members'`
+var Node = require('redis-graph')
+Node.setClient(require('redis').createClient())
+
+```
+
+## Node(id [, opts])
+return a new `node` 
+
+An options argument with `inner` and `outer` properties can be passed as the second argument, which will be used for the inner/outer edges for the node. 
+
+`inner` defaults to `'membership'` and `'outer'` defaults to `'members'`
 
 The defaults are suitable for a graph of groups. These edge names could be something else, e.g. `'followers'` and `'following'` to mimic twitter's social graph.
 
@@ -74,7 +83,7 @@ Node('me').membership.all(function (err, nodes) {
 ```
 
 ## .{members,membership}.delete(nodes, function (error) { ... })
-remove an edge or edges to `nodes` from this instance
+remove an edge or edges from `nodes` to this instance
 
 ``` js
 Node('user').members.delete('me', function (err, nodes) {
@@ -90,7 +99,7 @@ Node('me').membership.delete('user', function (err, nodes) {
 ```
 
 ## .{members,membership}.union(nodes, function (error, nodes) { ... })
-return a union of the edges with the `nodes` edges provided with logical `&&`
+return a union of the edges with the `nodes` edges provided with logical `||`
 
 ``` js
 Node('you').membership.union('me', function (e, nodes) {
@@ -139,7 +148,7 @@ Node('you').membership.members(function (e, nodes) {
 })
 ```
 
-# .delete(function (error) { ... })
+## .delete(function (error) { ... })
 delete this instance and remove all of its edges from redis
 
 ``` js
