@@ -103,12 +103,12 @@ return a union of the edges with the `nodes` edges provided with logical `||`
 
 ``` js
 Node('you').membership.union('me', function (e, nodes) {
-  // do something with the list of memberships either `'you'` || `'me'` have
+  // do something with the list of memberships either 'you' || 'me' have
   // ..
 })
 
 Node('user').members.union('admin', function (e, nodes) {
-  // do something with the members of `'user'` and `'admin'`
+  // do something with the members of 'user' and 'admin'
   // ..
 })
 ```
@@ -118,7 +118,7 @@ return an intersection of the edges with the `nodes` edges provided, with logica
 
 ``` js
 Node('you').membership.intersect('me', function (e, nodes) {
-  // do something with the list of memberships both `'you'` && `'me'` have
+  // do something with the list of memberships both 'you' && 'me' have
   // ..
 })
 ```
@@ -128,7 +128,7 @@ return the result of a subtraction of the `nodes` edges from the instance's edge
 
 ``` js
 Node('you').membership.without('me', function (e, nodes) {
-  // do something with the list of memberships `'you'` have that `'me'` does not have
+  // do something with the list of memberships 'you' have that 'me' does not have
   // ..
 })
 ```
@@ -146,6 +146,15 @@ Node('you').membership.members(function (e, nodes) {
   // do something with a list of nodes that are members of the nodes that i have membership to
   // ..
 })
+```
+
+## .toString(function (error) { ... })
+return the string id of this instance
+
+``` js
+Node('user').toString()
+// => 'user'
+
 ```
 
 ## .delete(function (error) { ... })
