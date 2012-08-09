@@ -2,16 +2,36 @@ var util = require('util')
   , format = util.format.bind(util)
   , db
 
-module.exports = function (id, opts) {
+/**
+ * Return a new Node instance with `node` and `opts`
+ *
+ * @param {String || Object} node
+ * @param {Object} opts
+ * @return {Object} 
+ * @api public
+ */
+
+module.exports = function (node, opts) {
   opts = opts || {}
   opts.inner = opts.inner || 'membership'
   opts.outer = opts.outer || 'members'
-  return new Node(String(id), opts)
+  return new Node(String(node), opts)
 }
+
+/**
+ * Set the redis client
+ *
+ * @param {Object} client
+ * @api public
+ */
 
 module.exports.setClient = function (client) {
   db = client
 }
+
+/**
+ * Node Constructor
+ */
 
 function Node (id, opts) {
   var me = this
@@ -38,9 +58,23 @@ function Node (id, opts) {
   })
 }
 
-Node.prototype.toString = function (cb) {
+/**
+ * Return the string id of the node instance
+ *
+ * @return {String}
+ * @api public
+ */
+
+Node.prototype.toString = function () {
   return this.id
 }
+
+/**
+ * Delete the node and all of its edges
+ *
+ * @param {Function} cb
+ * @api public
+ */
 
 Node.prototype.delete = function (cb) {
   var me = this
@@ -62,6 +96,12 @@ Node.prototype.delete = function (cb) {
     })
   ;
 }
+
+/**
+ * Initialize a new `Edge` with inner/outer edge names
+ *
+ * @param {Object} opts
+ */
 
 function Edge (opts) {
   this.id = opts.id
@@ -87,9 +127,22 @@ function Edge (opts) {
   }
 }
 
+/**
+ * Return all of the inner edges for the parent `node` instance
+ *
+ * @param {Function} cb
+ */
+
 Edge.prototype.all = function (cb) { 
   db.smembers([ this.innerkey ], cb)
 }
+
+/**
+ * Add edges to `arr` for the parent `node` instance
+ *
+ * @param {String || Array} arr
+ * @param {Function} cb
+ */
 
 Edge.prototype.add = function (arr, cb) { 
   arr = Array.isArray(arr) ? arr : [ arr ]
@@ -102,6 +155,13 @@ Edge.prototype.add = function (arr, cb) {
   multi.exec(cb)
 }
 
+/**
+ * Delete edges to `arr` for the parent `node` instance
+ *
+ * @param {String || Array} arr
+ * @param {Function} cb
+ */
+
 Edge.prototype.delete = function (arr, cb) { 
   arr = Array.isArray(arr) ? arr : [ arr ]
   arr = arr.map(String)
@@ -113,6 +173,13 @@ Edge.prototype.delete = function (arr, cb) {
   multi.exec(cb)
 }
 
+/**
+ * Return the inner edges with the edges of `arr` removed
+ *
+ * @param {String || Array} arr
+ * @param {Function} cb
+ */
+
 Edge.prototype.without = function (arr, cb) {
   arr = Array.isArray(arr) ? arr : [ arr ]
   arr = arr.map(function (gid) { return format(this.innerformat, String(gid)) }, this)
@@ -120,12 +187,26 @@ Edge.prototype.without = function (arr, cb) {
   db.sdiff(arr, cb)
 }
 
+/**
+ * Return an intersection (logical AND) of inner edges with those of `arr`
+ *
+ * @param {String || Array} arr
+ * @param {Function} cb
+ */
+
 Edge.prototype.intersect = function (arr, cb) {
   arr = Array.isArray(arr) ? arr : [ arr ]
   arr = arr.map(function (gid) { return format(this.innerformat, String(gid)) }, this)
   arr.unshift(this.innerkey)
   db.sinter(arr, cb)
 }
+
+/**
+ * Return a union (logical XOR) of inner edges with those of `arr`
+ *
+ * @param {String || Array} arr
+ * @param {Function} cb
+ */
 
 Edge.prototype.union = function (arr, cb) {
   arr = Array.isArray(arr) ? arr : [ arr ]
