@@ -1,6 +1,6 @@
 {
   "name": "redis-graph",
-  "version": "0.1.1",
+  "version": "0.2.1",
   "description": "a graph database using redis sets",
   "main": "index.js",
   "bin": {},

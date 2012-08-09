@@ -69,18 +69,6 @@ function Edge (opts) {
   this.outerformat = opts.outer + '_%s'
   this.innerkey = format(this.innerformat, this.id)
   this.outerkey = format(this.outerformat, this.id)
-  // this[opts.inner] = function (id, cb) {
-    // db.sinter([ format(this.innerformat, String(id)), this.outerkey ], cb)
-  // }
-  // this[opts.outer] = function (id, cb) {
-    // db.sinter([ format(this.innerformat, String(id)), this.innerkey ], cb)
-  // }
-  // this[opts.inner + '_with'] = function (id, cb) {
-    // db.sinter([ format(this.outerformat, String(id)), this.innerkey ], cb)
-  // }
-  // this[opts.outer + '_with'] = function (id, cb) {
-    // db.sinter([ format(this.outerformat, String(id)), this.outerkey ], cb)
-  // }
   this[opts.inner] = function (cb) {
     this.all(function (error, array) {
       if (error) return cb(error)
@@ -99,26 +87,30 @@ function Edge (opts) {
   }
 }
 
-// Edge.prototype.with = function (id, cb) { 
-  // db.sinter([ format(this.outerformat, String(id)), this.outerkey ], cb)
-// }
-
 Edge.prototype.all = function (cb) { 
   db.smembers([ this.innerkey ], cb)
 }
 
-Edge.prototype.add = function (reverse, cb) { 
-  db.multi()
-    .sadd([ this.innerkey, String(reverse) ])
-    .sadd([ format(this.outerformat, String(reverse)), this.id ])
-    .exec(cb)
+Edge.prototype.add = function (arr, cb) { 
+  arr = Array.isArray(arr) ? arr : [ arr ]
+  arr = arr.map(String)
+  var multi = db.multi()
+  arr.forEach(function (gid) {
+    multi.sadd([ this.innerkey, String(gid) ])
+    multi.sadd([ format(this.outerformat, String(gid)), this.id ])
+  }, this)
+  multi.exec(cb)
 }
 
-Edge.prototype.delete = function (reverse, cb) { 
-  db.multi()
-    .srem([ this.innerkey, String(reverse) ])
-    .srem([ format(this.outerformat, String(reverse)), this.id ])
-    .exec(cb)
+Edge.prototype.delete = function (arr, cb) { 
+  arr = Array.isArray(arr) ? arr : [ arr ]
+  arr = arr.map(String)
+  var multi = db.multi()
+  arr.forEach(function (gid) {
+    multi.srem([ this.innerkey, String(gid) ])
+    multi.srem([ format(this.outerformat, String(gid)), this.id ])
+  }, this)
+  multi.exec(cb)
 }
 
 Edge.prototype.without = function (arr, cb) {
@@ -141,12 +133,3 @@ Edge.prototype.union = function (arr, cb) {
   arr.unshift(this.innerkey)
   db.sunion(arr, cb)
 }
-
-// Edge.prototype.toNodes = function toNodes (cb) {
-//   return function (error, array) {
-//     if (error) return cb(error, array)
-//     cb(null, array.map(function (gid) {
-//       return this.Node(gid)
-//     }, this))
-//   }.bind(this)
-// }
