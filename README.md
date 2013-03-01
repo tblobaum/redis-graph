@@ -67,6 +67,15 @@ Node('me').membership.add('user', function (error) {
 })
 ```
 
+## .{members,membership}.has(node, function (error, hasNode) { ... })
+checks wether not this instance has an edge to `node`
+
+``` js
+Node('user').members.has('me', function (error, hasUser) {
+  // hasUser == true || hasUser == false
+})
+```
+
 ## .{members,membership}.all(function (error, nodes) { ... })
 return a list of nodes
 

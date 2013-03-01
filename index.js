@@ -156,6 +156,17 @@ Edge.prototype.add = function (arr, cb) {
 }
 
 /**
+ * Checks if parent `node` instance has an edge to `member`
+ *
+ * @param {String} member
+ * @param {Function} cb
+ */
+
+Edge.prototype.has = function (member, cb) {
+  db.sismember(this.innerkey, member, cb)
+}
+
+/**
  * Delete edges to `arr` for the parent `node` instance
  *
  * @param {String || Array} arr

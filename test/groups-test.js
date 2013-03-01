@@ -13,17 +13,25 @@ var Tom = group('tom')
 
 test('test all the things', function (t) {
 
-  t.plan(96)
+  t.plan(98)
 
   Tom.membership.add('anonymous', function (error, result) {
     t.deepEqual(error, null, 'error should be null')
     t.deepEqual(result, [ 1, 1 ], 'result should be the same')
   })
 
+  Tom.membership.has('admin', function (error, result) {
+    t.notOk(result, 'result should be falsy')
+  })
+
   Tom.membership.add('admin', function (error, result) {
     t.deepEqual(error, null, 'error should be null')
     t.deepEqual(result, [ 1, 1 ], 'result should be the same')
   })
+
+  Tom.membership.has('admin', function (error, result) {
+    t.ok(result, 'result should be truthy')
+  });
 
   Tom.membership.add('one', function (error, result) {
     t.deepEqual(error, null, 'error should be null')
