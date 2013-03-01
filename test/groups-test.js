@@ -13,7 +13,7 @@ var Tom = group('tom')
 
 test('test all the things', function (t) {
 
-  t.plan(98)
+  t.plan(100)
 
   Tom.membership.add('anonymous', function (error, result) {
     t.deepEqual(error, null, 'error should be null')
@@ -163,6 +163,10 @@ test('test all the things', function (t) {
     t.deepEqual(result.sort(), [ 'javascript', 'nodejs', 'otherGroup', 'anonymous', 'admin', 'one', 'two' ].sort(), 'result should be the same')
   })
 
+  nodejs.members.has(javascript, function (error, result) {
+    t.notOk(result, 'result should be falsy')
+  })
+
   nodejs.members.add(javascript, function (error, result) {
     t.deepEqual(error, null, 'error should be null')
     t.deepEqual(result, [ 1, 1 ], 'result should be the same')
@@ -170,6 +174,10 @@ test('test all the things', function (t) {
       t.deepEqual(error, null, 'error should be null')
       t.deepEqual(result, [ 0, 0 ], 'result should be the same')
     })
+  })
+
+  nodejs.members.has(javascript, function (error, result) {
+    t.ok(result, 'result should be truthy')
   })
 
   javascript.members.all(function (error, result) {
